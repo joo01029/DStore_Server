@@ -26,7 +26,11 @@ public class AuthController {
   @Autowired
   UserService userService;
 
-  //유저 생성
+  /**
+   * 유저 생성
+   * @param userDto
+   * @return
+   */
   @PostMapping("/create")
   public Response userCreate(@RequestBody UserDto userDto){
     Response response = new Response();
@@ -62,12 +66,16 @@ public class AuthController {
     return response;
   }
 
-  //로그인
+  /**
+   * 로그인
+   * @param userDto
+   * @return
+   */
   @PostMapping("/login")
   public LoginResponse login(@RequestBody UserDto userDto){
     LoginResponse loginResponse = new LoginResponse();
 
-    //비밀번호 암호화
+    // 비밀번호 암호화
     String hashPassword = securityService.hashPassword(userDto.getPassword());
     userDto.setPassword(hashPassword);
 
@@ -90,7 +98,7 @@ public class AuthController {
 
       return loginResponse;
     }
-    //token발행
+    // token 발행
     String subject = findUserResponse.get().getEmail();
 
     long accessExpiredTime = 20 * 60 * 1000L;
@@ -121,6 +129,12 @@ public class AuthController {
 
     return loginResponse;
   }
+
+  /**
+   * 토큰 리프레쉬
+   * @param Authorization
+   * @return
+   */
   @GetMapping("/refresh")
   public LoginResponse tokenRefresh(@RequestHeader String Authorization){
     LoginResponse loginResponse = new LoginResponse();
@@ -156,6 +170,11 @@ public class AuthController {
     return loginResponse;
   }
 
+  /**
+   * 이메일 전송
+   * @param userDto
+   * @return
+   */
   @GetMapping("/send/email")
   public Response sendEmail(@RequestParam UserDto userDto){
     Response response = new Response();

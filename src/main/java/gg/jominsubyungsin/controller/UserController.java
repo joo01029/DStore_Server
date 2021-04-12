@@ -27,6 +27,12 @@ public class UserController {
   @Autowired
   SecurityService securityService;
 
+  /**
+   * 자기 소개 수정
+   * @param userDto
+   * @param Authorization
+   * @return
+   */
   @PostMapping("/set/introduce")
   public Response setIntroduce(@RequestBody UserDto userDto, @RequestHeader String Authorization){
     Response response = new Response();
@@ -53,6 +59,12 @@ public class UserController {
 
     return response;
   }
+
+  /**
+   * 유저 정보 수정
+   * @param userUpdateDto
+   * @return
+   */
   @PutMapping("/update")
   public Response userUpdate (@RequestBody UserUpdateDto userUpdateDto){
     Response response = new Response();
@@ -96,6 +108,11 @@ public class UserController {
     return response;
   }
 
+  /**
+   * 회원 탈퇴
+   * @param userDto
+   * @return
+   */
   @DeleteMapping("/delete")
   public Response userDelete(@RequestBody UserDto userDto){
     Response response = new Response();

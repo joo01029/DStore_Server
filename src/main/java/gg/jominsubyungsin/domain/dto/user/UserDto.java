@@ -5,7 +5,8 @@ import lombok.Setter;
 import gg.jominsubyungsin.domain.entitiy.UserEntitiy;
 import org.springframework.web.multipart.MultipartFile;
 
-@Getter @Setter
+@Getter
+@Setter
 public class UserDto {
   private Long id;
 
