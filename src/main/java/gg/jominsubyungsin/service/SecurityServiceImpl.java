@@ -6,9 +6,11 @@ import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.spec.SecretKeySpec;
+import javax.validation.Valid;
 import javax.xml.bind.DatatypeConverter;
 import java.math.BigInteger;
 import java.security.Key;
@@ -32,8 +34,10 @@ public class SecurityServiceImpl implements SecurityService{
     }
   }
 
-  private static final String ACCESSSECRET_KEY = "asdwqedsaasdwqesadsjosjndknaskmlcnkejdoknlksamlcnsqlkndoqkwacsdqwa";
-  private static final String REFRESHSECRET_KEY = "wqeniodnvsksadowqjndlknmsandokwqmlkdnjnfcosajkjqkwdmklsankclnwondkwqnldsneqdsndk";
+  @Value("${auth.access}")
+  private String ACCESSSECRET_KEY;
+  @Value("${auth.refresh}")
+  private String REFRESHSECRET_KEY;
 
   @Override
   public String createToken(String subject, long ttlMillis, boolean MakeTokenForRefresh){
