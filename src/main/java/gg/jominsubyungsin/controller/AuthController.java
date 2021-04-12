@@ -1,13 +1,16 @@
 package gg.jominsubyungsin.controller;
 
+import gg.jominsubyungsin.domain.dto.email.EmailDto;
 import gg.jominsubyungsin.domain.dto.user.UserDto;
 import gg.jominsubyungsin.domain.entitiy.UserEntitiy;
 import gg.jominsubyungsin.response.Response;
 import gg.jominsubyungsin.response.user.LoginResponse;
+import gg.jominsubyungsin.service.EmailService;
 import gg.jominsubyungsin.service.SecurityService;
 import gg.jominsubyungsin.service.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -25,12 +28,9 @@ public class AuthController {
   SecurityService securityService;
   @Autowired
   UserService userService;
-
-  /**
-   * 유저 생성
-   * @param userDto
-   * @return
-   */
+  @Autowired
+  EmailService emailService;
+  //유저 생성
   @PostMapping("/create")
   public Response userCreate(@RequestBody UserDto userDto){
     Response response = new Response();
@@ -66,16 +66,12 @@ public class AuthController {
     return response;
   }
 
-  /**
-   * 로그인
-   * @param userDto
-   * @return
-   */
+  //로그인
   @PostMapping("/login")
   public LoginResponse login(@RequestBody UserDto userDto){
     LoginResponse loginResponse = new LoginResponse();
 
-    // 비밀번호 암호화
+    //비밀번호 암호화
     String hashPassword = securityService.hashPassword(userDto.getPassword());
     userDto.setPassword(hashPassword);
 
@@ -98,7 +94,7 @@ public class AuthController {
 
       return loginResponse;
     }
-    // token 발행
+    //token발행
     String subject = findUserResponse.get().getEmail();
 
     long accessExpiredTime = 20 * 60 * 1000L;
@@ -129,12 +125,6 @@ public class AuthController {
 
     return loginResponse;
   }
-
-  /**
-   * 토큰 리프레쉬
-   * @param Authorization
-   * @return
-   */
   @GetMapping("/refresh")
   public LoginResponse tokenRefresh(@RequestHeader String Authorization){
     LoginResponse loginResponse = new LoginResponse();
@@ -170,19 +160,33 @@ public class AuthController {
     return loginResponse;
   }
 
-  /**
-   * 이메일 전송
-   * @param userDto
-   * @return
-   */
+  @Value("${spring.mail.username}")
+  private String email;
+
   @GetMapping("/send/email")
-  public Response sendEmail(@RequestParam UserDto userDto){
+  public Response sendEmail(@RequestParam String mail){
     Response response = new Response();
+
+    System.out.println(mail);
+
+    String authKey = securityService.hashPassword(mail);
+    EmailDto emailDto = new EmailDto();
+
+    emailDto.setSenderMail(email);
+    emailDto.setReceiveMail(mail);
+    emailDto.setSubject("이메일 인증");
+    emailDto.setSenderName("D-Store");
+    emailDto.setMessage(new StringBuffer().append("<h1>회원가입 인증메일입니다.</h1>")
+            .append("<p>밑의 링크를 클릭하면 메일이 인증 됩니다.</p>")
+            .append("<a href=`http://localhost:8080/auth/email?email="+mail)
+            .append("&authKey="+authKey).append(">메일 인증 링크</a>")
+            .toString());
+    emailService.sendMail(emailDto);
+
+    response.setMessage("이메일 보내기 성공");
     response.setHttpStatus(HttpStatus.OK);
     response.setStatus(HttpStatus.OK.value());
     response.setResult(true);
-    response.setMessage("아아아아");
     return response;
-
   }
 }
