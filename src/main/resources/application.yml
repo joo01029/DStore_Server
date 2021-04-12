@@ -1,0 +1,35 @@
+spring:
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: <login user to smtp server> (eothrh3@gmail.com)
+    password: <login password to smtp server> (pure6671)
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/jmsbs?serverTimezone=UTC
+    username: root
+    password: pure6671
+
+
+  jpa:
+    show-sql: true
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    hibernate:
+      ddl-auto: update
+    open-in-view: true
+
+logging:
+  level:
+    org:
+      hibernate:
+        sql: DEBUG
+        type:
+          descriptor:
+            sql:
+              BasicBinder: trace
